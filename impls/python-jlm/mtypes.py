@@ -14,6 +14,9 @@ class Symbol(Node):
     def __str__(self):
         return self.value
 
+    def __hash__(self):
+        return hash(self.value)
+
 
 @dataclass
 class Keyword(Node):
