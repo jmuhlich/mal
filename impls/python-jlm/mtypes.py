@@ -68,3 +68,14 @@ class Hashmap(Node, collections.abc.Mapping):
 
     def __len__(self):
         return len(self.values)
+
+
+@dataclass
+class Fn(Node):
+    ast: Node
+    params: Sequence(Symbol)
+    env: "env.Env"
+    fn: collections.abc.Callable
+
+    def __str__(self):
+        return "#<function>"
