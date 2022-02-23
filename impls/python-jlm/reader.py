@@ -123,6 +123,12 @@ def read_atom(r: Reader):
         return mtypes.Keyword(t[1:])
     elif re.match(r"-?\d+$", t):
         return int(t)
+    elif t == "nil":
+        return None
+    elif t == "true":
+        return True
+    elif t == "false":
+        return False
     else:
         return mtypes.Symbol(t)
 
