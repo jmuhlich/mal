@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field, InitVar
-from typing import Optional, List
+from typing import Optional
 
-from mtypes import Node, Symbol
+from mtypes import Node, Symbol, List
 
 
 class UnknownSymbolError(RuntimeError):
@@ -12,13 +12,17 @@ class UnknownSymbolError(RuntimeError):
 class Env:
     outer: Optional["Env"] = None
     data: dict = field(default_factory=dict)
-    binds: InitVar[List[Symbol]] = None
-    exprs: InitVar[List[Node]] = None
+    binds: InitVar[list[Symbol]] = None
+    exprs: InitVar[list[Node]] = None
 
     def __post_init__(self, binds, exprs):
-        if binds and exprs:
-            for k, v in zip(binds, exprs):
-                self.set(k, v)
+        if binds:
+            for i, k in enumerate(binds):
+                if k == "&":
+                    self.set(binds[i + 1], List(exprs[i:]))
+                    break
+                else:
+                    self.set(k, exprs[i])
 
     def set(self, key: Symbol, value: Node):
         self.data[key] = value
