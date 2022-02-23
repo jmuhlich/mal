@@ -7,9 +7,6 @@ import printer
 import reader
 
 
-class UnknownSymbolError(RuntimeError):
-    pass
-
 class InvalidSyntaxError(RuntimeError):
     pass
 

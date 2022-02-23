@@ -1,11 +1,8 @@
 import env
-from mtypes import Node, Symbol, Sequence, List, Vector, Hashmap
+from mtypes import Node, Symbol, Sequence, List, Vector, Hashmap, UnknownSymbolError
 import printer
 import reader
 
-
-class UnknownSymbolError(RuntimeError):
-    pass
 
 class InvalidSyntaxError(RuntimeError):
     pass
@@ -89,7 +86,7 @@ while True:
     except reader.UnbalancedQuoteError:
         print("unbalanced quotes")
         continue
-    except env.UnknownSymbolError as e:
+    except UnknownSymbolError as e:
         print(f"'{e}' not found")
         continue
     except InvalidSyntaxError as e:

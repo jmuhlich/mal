@@ -1,6 +1,12 @@
 import collections
 from dataclasses import dataclass, field
 
+import env
+
+
+class UnknownSymbolError(RuntimeError):
+    pass
+
 
 @dataclass
 class Node:

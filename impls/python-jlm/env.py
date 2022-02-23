@@ -1,35 +1,31 @@
 from dataclasses import dataclass, field, InitVar
 from typing import Optional
 
-from mtypes import Node, Symbol, List
-
-
-class UnknownSymbolError(RuntimeError):
-    pass
+import mtypes
 
 
 @dataclass
 class Env:
     outer: Optional["Env"] = None
     data: dict = field(default_factory=dict)
-    binds: InitVar[list[Symbol]] = None
-    exprs: InitVar[list[Node]] = None
+    binds: InitVar[list["mtypes.Symbol"]] = None
+    exprs: InitVar[list["mtypes.Node"]] = None
 
     def __post_init__(self, binds, exprs):
         if binds:
             for i, k in enumerate(binds):
                 match k:
-                    case Symbol("&"):
-                        self.set(binds[i + 1], List(exprs[i:]))
+                    case mtypes.Symbol("&"):
+                        self.set(binds[i + 1], mtypes.List(exprs[i:]))
                         break
                     case _:
                         self.set(k, exprs[i])
 
-    def set(self, key: Symbol, value: Node):
+    def set(self, key: "mtypes.Symbol", value: "mtypes.Node"):
         self.data[key] = value
         return value
 
-    def find(self, key: Symbol):
+    def find(self, key: "mtypes.Symbol"):
         if key in self.data:
             return self
         elif self.outer:
@@ -37,9 +33,9 @@ class Env:
         else:
             return None
 
-    def get(self, key: Symbol):
+    def get(self, key: "mtypes.Symbol"):
         env = self.find(key)
         if env:
             return env.data[key]
         else:
-            raise UnknownSymbolError(key)
+            raise mtypes.UnknownSymbolError(key)
