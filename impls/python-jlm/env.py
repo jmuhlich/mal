@@ -18,11 +18,12 @@ class Env:
     def __post_init__(self, binds, exprs):
         if binds:
             for i, k in enumerate(binds):
-                if k == "&":
-                    self.set(binds[i + 1], List(exprs[i:]))
-                    break
-                else:
-                    self.set(k, exprs[i])
+                match k:
+                    case Symbol("&"):
+                        self.set(binds[i + 1], List(exprs[i:]))
+                        break
+                    case _:
+                        self.set(k, exprs[i])
 
     def set(self, key: Symbol, value: Node):
         self.data[key] = value

@@ -22,7 +22,7 @@ def EVAL(x: Node, e: env.Env) -> Node:
     match x:
         case List([]):
             return x
-        case List([Symbol("def!"), Symbol(key), expr]):
+        case List([Symbol("def!"), Symbol() as key, expr]):
             return e.set(key, EVAL(expr, e))
         case List([Symbol("def!"), *_]):
             raise InvalidSyntaxError("def! takes a symbol and an expression")
@@ -32,8 +32,8 @@ def EVAL(x: Node, e: env.Env) -> Node:
             e = env.Env(e)
             for bsym, bexpr in zip(binds[::2], binds[1::2]):
                 match bsym:
-                    case Symbol(key):
-                        e.set(bsym.value, EVAL(bexpr, e))
+                    case Symbol():
+                        e.set(bsym, EVAL(bexpr, e))
                     case _:
                         raise InvalidSyntaxError("let* can only bind to a symbol")
             return EVAL(expr, e)
@@ -53,7 +53,7 @@ def EVAL(x: Node, e: env.Env) -> Node:
             )
         case List([Symbol("fn*"), Sequence(names), body]):
             def fn(*args):
-                e_inner = env.Env(e, binds=[n.value for n in names], exprs=args)
+                e_inner = env.Env(e, binds=names, exprs=args)
                 return EVAL(body, e_inner)
             return fn
         case List():
@@ -70,8 +70,8 @@ def PRINT(x: Node) -> str:
 
 def eval_ast(node: Node, e: env.Env):
     match node:
-        case Symbol(value):
-            return e.get(value)
+        case Symbol():
+            return e.get(node)
         case List(values):
             return List([EVAL(v, e) for v in values])
         case Vector(values):
@@ -98,7 +98,7 @@ def rep(x: str) -> str:
 
 repl_env = env.Env()
 for k, v in core.ns.items():
-    repl_env.set(k, v)
+    repl_env.set(Symbol(k), v)
 
 rep("(def! not (fn* (a) (if a false true)))")
 

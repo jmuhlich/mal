@@ -19,7 +19,7 @@ def EVAL(x: Node, e: env.Env) -> Node:
     match x:
         case List([]):
             return x
-        case List([Symbol("def!"), Symbol(key), expr]):
+        case List([Symbol("def!"), Symbol() as key, expr]):
             return e.set(key, EVAL(expr, e))
         case List([Symbol("def!"), *rest]):
             raise InvalidSyntaxError("def! takes a symbol and an expression")
@@ -29,8 +29,8 @@ def EVAL(x: Node, e: env.Env) -> Node:
             e = env.Env(e)
             for bsym, bexpr in zip(binds[::2], binds[1::2]):
                 match bsym:
-                    case Symbol(key):
-                        e.set(bsym.value, EVAL(bexpr, e))
+                    case Symbol():
+                        e.set(bsym, EVAL(bexpr, e))
                     case _:
                         raise InvalidSyntaxError("let* can only bind to a symbol")
             return EVAL(expr, e)
@@ -50,8 +50,8 @@ def PRINT(x: Node) -> str:
 
 def eval_ast(node: Node, e: env.Env):
     match node:
-        case Symbol(value):
-            return e.get(value)
+        case Symbol():
+            return e.get(node)
         case List(values):
             return List([EVAL(v, e) for v in values])
         case Vector(values):
@@ -70,10 +70,10 @@ def rep(x: str) -> str:
 
 
 repl_env = env.Env()
-repl_env.set("+", lambda a, b: a + b)
-repl_env.set("-", lambda a, b: a - b)
-repl_env.set("*", lambda a, b: a * b)
-repl_env.set("/", lambda a, b: a // b)
+repl_env.set(Symbol("+"), lambda a, b: a + b)
+repl_env.set(Symbol("-"), lambda a, b: a - b)
+repl_env.set(Symbol("*"), lambda a, b: a * b)
+repl_env.set(Symbol("/"), lambda a, b: a // b)
 
 
 while True:
