@@ -2,6 +2,7 @@ import operator
 
 from mtypes import Sequence, List
 import printer
+import reader
 
 
 def f_prn(*args):
@@ -15,6 +16,10 @@ def f_str(*args):
 
 def f_println(*args):
     print(" ".join(printer.pr_str(x) for x in args))
+
+def f_slurp(x):
+    with open(x) as f:
+        return f.read()
 
 def f_list(*args):
     return List(list(args))
@@ -48,6 +53,8 @@ ns = {
     "pr-str": f_pr_str,
     "str": f_str,
     "println": f_println,
+    "read-string": reader.read_str,
+    "slurp": f_slurp,
     "list": f_list,
     "list?": f_listp,
     "empty?": f_emptyp,
