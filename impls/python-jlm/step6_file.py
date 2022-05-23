@@ -5,14 +5,19 @@ from typing import Optional
 import core
 from env import Env
 from mtypes import (
-    Node, Symbol, Sequence, List, Vector, Hashmap, Fn, UnknownSymbolError
+    Node,
+    Symbol,
+    Sequence,
+    List,
+    Vector,
+    Hashmap,
+    Fn,
+    UnknownSymbolError,
+    InvalidSyntaxError,
+    InvalidTypeError,
 )
 import printer
 import reader
-
-
-class InvalidSyntaxError(RuntimeError):
-    pass
 
 
 def READ(x: str) -> Node:
@@ -72,7 +77,7 @@ def EVAL(ast: Node, env: Env) -> Node:
                         ast = f.ast
                         env = Env(f.env, binds=f.params, exprs=args)
                     case _:
-                        raise InvalidSyntaxError(
+                        raise InvalidTypeError(
                             "attempted to call a non-function"
                         )
             case _:
@@ -147,6 +152,9 @@ while True:
         continue
     except InvalidSyntaxError as e:
         print(f"syntax error: {e}")
+        continue
+    except InvalidTypeError as e:
+        print(f"type error: {e}")
         continue
     except reader.EmptyExpression:
         continue

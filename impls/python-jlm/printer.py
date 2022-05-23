@@ -2,7 +2,7 @@ import collections.abc
 import itertools
 import re
 
-from mtypes import List, Vector, Hashmap, Sequence
+from mtypes import List, Vector, Hashmap, Atom, Sequence
 
 
 escapes_pat = re.compile('[\\\\"\n]')
@@ -21,6 +21,8 @@ def pr_str(x, print_readably=False) -> str:
             return "[" + pr_str_sequence(x, print_readably) + "]"
         case Hashmap():
             return "{" + pr_str_hashmap(x, print_readably) + "}"
+        case Atom(value):
+            return "(atom " + pr_str(value) + ")"
         case str():
             if print_readably:
                 x = escapes_pat.sub(lambda m: escapes_map[m.group()], x)

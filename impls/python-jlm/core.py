@@ -1,6 +1,7 @@
+import collections
 import operator
 
-from mtypes import Sequence, List
+from mtypes import Sequence, List, Fn, Atom, InvalidTypeError
 import printer
 import reader
 
@@ -44,6 +45,30 @@ def f_eq(x, y, *_):
         case _:
             return x == y
 
+def f_atom(x):
+    return Atom(x)
+
+def f_atomp(x):
+    return isinstance(x, Atom)
+
+def f_deref(x):
+    return x.value
+
+def f_reset(x, v):
+    x.value = v
+    return x.value
+
+def f_swap(x, f, *args):
+    match f:
+        case collections.abc.Callable():
+            pass
+        case Fn(fn=f):
+            pass
+        case _:
+            raise InvalidTypeError("attempted to call a non-function")
+    x.value = f(x.value, *args)
+    return x.value
+
 ns = {
     "+": operator.add,
     "-": operator.sub,
@@ -64,4 +89,9 @@ ns = {
     "<=": operator.le,
     ">": operator.gt,
     ">=": operator.ge,
+    "atom": f_atom,
+    "atom?": f_atomp,
+    "deref": f_deref,
+    "reset!": f_reset,
+    "swap!": f_swap,
 }

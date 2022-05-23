@@ -1,10 +1,19 @@
 import collections
 from dataclasses import dataclass, field
+from typing import Any
 
 import env
 
 
 class UnknownSymbolError(RuntimeError):
+    pass
+
+
+class InvalidSyntaxError(RuntimeError):
+    pass
+
+
+class InvalidTypeError(RuntimeError):
     pass
 
 
@@ -79,3 +88,8 @@ class Fn(Node):
 
     def __str__(self):
         return "#<function>"
+
+
+@dataclass
+class Atom:
+    value: Any
