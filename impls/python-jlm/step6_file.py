@@ -130,6 +130,7 @@ if len(sys.argv) > 1:
     repl_env.set(Symbol("*ARGV*"), List(argv))
     path_val = printer.pr_str(script_path, print_readably=True)
     rep(f'(load-file {path_val})')
+    sys.exit(0)
 else:
     repl_env.set(Symbol("*ARGV*"), List([]))
 
